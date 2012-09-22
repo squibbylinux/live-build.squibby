@@ -1,0 +1,25 @@
+Description: Update the APT Xapian index
+Author: Colin Watson <cjwatson@ubuntu.com>
+Bug-Debian: http://bugs.debian.org/627716
+Forwarded: http://bugs.debian.org/627716
+Last-Update: 2011-06-11
+
+Index: b/scripts/build/lb_chroot_hacks
+===================================================================
+--- a/scripts/build/lb_chroot_hacks
++++ b/scripts/build/lb_chroot_hacks
+@@ -222,6 +222,14 @@
+ 	Chroot chroot updatedb.mlocate
+ fi
+ 
++# Update the Apt Xapian index.  The package would do this itself, but (a) it
++# checks policy-rc.d which says it isn't allowed to, and (b) it wants to
++# build the index in the background which will be racy in the context of
++# live-build.
++if [ -x chroot/usr/sbin/update-apt-xapian-index ]; then
++	Chroot chroot /usr/sbin/update-apt-xapian-index --force --quiet
++fi
++
+ # Remove build systems clock drift
+ echo "0.0 0 0.0" > chroot/etc/adjtime
+ 

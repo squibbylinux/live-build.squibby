@@ -1,0 +1,11 @@
+--- live-build-3.0~a24/functions/defaults.sh.orig	2011-12-02 11:27:35.000000000 -0700
++++ live-build-3.0~a24/functions/defaults.sh	2011-12-02 11:28:27.000000000 -0700
+@@ -592,7 +592,7 @@
+ 
+ 	# Setting linux flavour string
+ 	case "${LB_ARCHITECTURES}" in
+-		armel)
++		armel|armhf)
+ 			if [ -z "${LB_LINUX_FLAVOURS}" ]
+ 			then
+ 				Echo_error "There is no default kernel flavour defined for your architecture."

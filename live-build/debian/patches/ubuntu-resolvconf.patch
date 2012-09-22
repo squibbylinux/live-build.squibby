@@ -1,0 +1,39 @@
+Description: Deal with the case where /etc/resolv.conf is a symlink
+Author: Stéphane Graber <stgraber@ubuntu.com>, Adam Conrad <adconrad@ubuntu.com>
+Last-Update: 2012-01-26
+
+--- live-build-3.0~a24.orig/scripts/build/lb_chroot_resolv
++++ live-build-3.0~a24/scripts/build/lb_chroot_resolv
+@@ -51,6 +51,10 @@ case "${1}" in
+ 			# If you want to have a custom resolv.conf, please
+ 			# overwrite it with normal local_includes mechanism.
+ 			Truncate chroot/etc/resolv.conf.orig
++		elif [ -L chroot/etc/resolv.conf ]
++		then
++			# Move resolv.conf aside if it's a symlink (likely resolvconf)
++			mv chroot/etc/resolv.conf chroot/etc/resolv.conf.orig
+ 		fi
+ 
+ 		if [ -f /etc/resolv.conf ]
+@@ -77,7 +81,7 @@ case "${1}" in
+ 			# Copying local resolv.conf
+ 			cp -a config/chroot_local-includes/etc/resolv.conf chroot/etc/resolv.conf
+ 			rm -f chroot/etc/resolv.conf.orig
+-		elif [ -e chroot/etc/resolv.conf.orig ]
++		elif [ -e chroot/etc/resolv.conf.orig ] || [ -L chroot/etc/resolv.conf.orig ]
+ 		then
+ 			# Restoring resolv file or symlink
+ 			mv chroot/etc/resolv.conf.orig chroot/etc/resolv.conf
+@@ -85,6 +89,12 @@
+ 			# Truncating resolv file
+ 			Truncate chroot/etc/resolv.conf
+ 		fi
++
++		# Clean up resolvconf's pollution
++		if [ -d chroot/etc/resolvconf/resolv.conf.d ]; then
++			rm -f chroot/etc/resolvconf/resolv.conf.d/original
++			rm -f chroot/etc/resolvconf/resolv.conf.d/tail
++		fi
+ 
+ 		# Removing stage file
+ 		rm -f .stage/chroot_resolv

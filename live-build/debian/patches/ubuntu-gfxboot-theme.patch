@@ -1,0 +1,48 @@
+Description: Copy gfxboot theme when building for Ubuntu
+Author: Colin Watson <cjwatson@ubuntu.com>
+Forwarded: no
+Last-Update: 2011-08-11
+
+Index: b/scripts/build/lb_binary_syslinux
+===================================================================
+--- a/scripts/build/lb_binary_syslinux
++++ b/scripts/build/lb_binary_syslinux
+@@ -53,6 +53,12 @@
+ 		Check_package chroot/usr/bin/syslinux syslinux
+ 		Check_package chroot/usr/share/syslinux/themes/${LB_SYSLINUX_THEME} syslinux-themes-${LB_SYSLINUX_THEME}
+ 
++		case "${LB_MODE}" in
++			ubuntu)
++				Check_package chroot/usr/share/gfxboot-theme-ubuntu/bootlogo.tar.gz gfxboot-theme-ubuntu
++				;;
++		esac
++
+ 		# Restoring cache
+ 		Restore_cache cache/packages_binary
+ 
+@@ -86,12 +92,25 @@
+ 	true)
+ 		# Copy in two steps since the theme can have absolute symlinks and would therefore not be dereferenced correctly
+ 		Chroot chroot "cp -aL /usr/share/syslinux/themes/${LB_SYSLINUX_THEME}/${_BOOTLOADER}-live /root/tmp"
++
++		case "${LB_MODE}" in
++			ubuntu)
++				Chroot chroot "tar xzf /usr/share/gfxboot-theme-ubuntu/bootlogo.tar.gz -C /root/tmp"
++				;;
++		esac
++
+ 		mv chroot/root/tmp/* ${_SUFFIX}
+ 		rmdir chroot/root/tmp
+ 		;;
+ 
+ 	false)
+ 		cp -aL /usr/share/syslinux/themes/${LB_SYSLINUX_THEME}/${_BOOTLOADER}-live/* ${_SUFFIX}
++
++		case "${LB_MODE}" in
++			ubuntu)
++				tar xzf /usr/share/gfxboot-theme-ubuntu/bootlogo.tar.gz -C ${_SUFFIX}
++				;;
++		esac
+ 		;;
+ esac
+ 

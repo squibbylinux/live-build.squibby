@@ -1,0 +1,33 @@
+Description: Tidy up linux-headers installation and duplication
+ ubuntu-chroot_headers_tidy.patch: Mark all the linux-headers-$(ABI)
+ packages as autoinstalled, and then autoremove cruft (LP: #1029556)
+Author: Adam Conrad <adconrad@ubuntu.com>
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1029556
+Forwarded: no
+Last-Update: 2012-07-26
+
+--- live-build-3.0~a24.orig/scripts/build/lb_chroot
++++ live-build-3.0~a24/scripts/build/lb_chroot
+@@ -66,6 +66,12 @@
+ 
+ 	if [ "${_PASS}" = install ]
+ 	then
++		Chroot chroot "dpkg -l linux-headers-3*" 2>/dev/null \
++			| awk '/^i/ {print $2}' > binary.headers
++		for i in $(cat binary.headers); do
++			Chroot chroot "apt-mark auto $i"
++		done
++		Chroot chroot "apt-get --purge -y autoremove"
+ 		Chroot chroot "dpkg-query -W" > binary.packages.install
+ 	fi
+ done
+--- live-build-3.0~a24.orig/scripts/build/lb_clean
++++ live-build-3.0~a24/scripts/build/lb_clean
+@@ -95,6 +95,7 @@ do
+ 			rm -f binary*.img
+ 			rm -f binary*.tar.gz
+ 			rm -f binary.sh
++			rm -f binary.headers
+ 			rm -f binary.list binary.packages binary.packages.install binary.packages.live md5sum.txt
+ 
+ 			rm -rf binary

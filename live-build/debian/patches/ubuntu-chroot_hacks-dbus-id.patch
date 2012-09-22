@@ -1,0 +1,19 @@
+Description: Remove /var/lib/dbus/machine-id
+ .
+   * Remove /var/lib/dbus/machine-id in lb_chroot_hacks to prevent every
+     machine installed from our media having the same ID.  This is a
+     regression from the previous livecd-rootfs behaviour (LP: #322830)
+Author: Adam Conrad <adconrad@ubuntu.com>
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/322830
+
+---
+--- live-build-3.0~a24.orig/scripts/build/lb_chroot_hacks
++++ live-build-3.0~a24/scripts/build/lb_chroot_hacks
+@@ -240,6 +240,7 @@ rm -f chroot/etc/group- chroot/etc/passw
+ rm -f chroot/etc/gshadow- chroot/etc/shadow-
+ rm -f chroot/var/cache/debconf/*-old
+ rm -f chroot/var/lib/dpkg/*-old
++rm -f chroot/var/lib/dbus/machine-id
+ rm -f chroot/var/log/apt/term.log
+ 
+ if [ -n "${LB_ROOT_COMMAND}" ]

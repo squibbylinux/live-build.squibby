@@ -1,0 +1,19 @@
+Description: Use a framebuffer in the initramfs
+ Wubi disk image installs do a fair amount of work in the initramfs.
+Author: Evan Dandrea <ev@ubuntu.com>
+
+--- live-build-3.0~a24.orig/scripts/build/lb_chroot_hacks
++++ live-build-3.0~a24/scripts/build/lb_chroot_hacks
+@@ -187,6 +187,12 @@ case "${SUBPROJECT}" in
+ 		;;
+ esac
+ 
++case "${SUBPROJECT}" in
++	wubi)
++		UPDATE_INITRAMFS_OPTIONS="$UPDATE_INITRAMFS_OPTIONS FRAMEBUFFER=y"
++		;;
++esac
++
+ Chroot chroot "${UPDATE_INITRAMFS_OPTIONS} update-initramfs -k all -t -u"
+ 
+ # We probably ought to use COMPRESS= in a temporary file in

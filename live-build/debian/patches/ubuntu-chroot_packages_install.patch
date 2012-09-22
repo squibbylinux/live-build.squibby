@@ -1,0 +1,19 @@
+Description: scripts/build/lb_chroot: Our current live-build version only
+ half-transitioned away from the *_local() functions. Put back the call to
+ lb chroot_local-packages, so that packages installed into
+ chroot/root/packages/ actually get installed. This is fixed properly in
+ 3.0~a25-1, so this can be dropped again at the next merge.
+Author: Martin Pitt <martin.pitt@ubuntu.com>
+Bug-Ubuntu: https://launchpad.net/bugs/857494
+Bug-Debian: http://bugs.debian.org/635046
+
+--- live-build-3.0~a24.orig/scripts/build/lb_chroot
++++ live-build-3.0~a24/scripts/build/lb_chroot
+@@ -50,6 +50,7 @@ lb chroot_resolv install ${*}
+ lb chroot_hostname install ${*}
+ lb chroot_apt install ${*}
+ lb chroot_archives install ${*}
++lb chroot_local-packages ${*}
+ 
+ # Customizing chroot
+ lb chroot_linux-image ${*}

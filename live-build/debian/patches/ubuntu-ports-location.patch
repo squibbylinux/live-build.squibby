@@ -1,0 +1,59 @@
+Description: Use the correct mirror locations for Ubuntu ports.
+Author: Adam Conrad <adconrad@ubuntu.com>
+
+--- live-build-3.0~a21.orig/functions/defaults.sh
++++ live-build-3.0~a21/functions/defaults.sh
+@@ -327,7 +327,7 @@ Set_defaults ()
+ 					;;
+ 
+ 				*)
+-					LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-http://ports.ubuntu.com/}"
++					LB_PARENT_MIRROR_BOOTSTRAP="${LB_PARENT_MIRROR_BOOTSTRAP:-http://ports.ubuntu.com/ubuntu-ports/}"
+ 					;;
+ 			esac
+ 
+@@ -362,7 +362,7 @@ Set_defaults ()
+ 					;;
+ 
+ 				*)
+-					LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY:-http://ports.ubuntu.com/}"
++					LB_PARENT_MIRROR_CHROOT_SECURITY="${LB_PARENT_MIRROR_CHROOT_SECURITY:-http://ports.ubuntu.com/ubuntu-ports/}"
+ 					;;
+ 			esac
+ 
+@@ -389,7 +389,7 @@ Set_defaults ()
+ 					;;
+ 
+ 				*)
+-					LB_PARENT_MIRROR_CHROOT_VOLATILE="${LB_PARENT_MIRROR_CHROOT_VOLATILE:-http://ports.ubuntu.com/}"
++					LB_PARENT_MIRROR_CHROOT_VOLATILE="${LB_PARENT_MIRROR_CHROOT_VOLATILE:-http://ports.ubuntu.com/ubuntu-ports/}"
+ 					;;
+ 			esac
+ 
+@@ -443,7 +443,7 @@ Set_defaults ()
+ 				;;
+ 
+ 				*)
+-					LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-http://ports.ubuntu.com/}"
++					LB_PARENT_MIRROR_BINARY="${LB_PARENT_MIRROR_BINARY:-http://ports.ubuntu.com/ubuntu-ports/}"
+ 					;;
+ 			esac
+ 
+@@ -475,7 +475,7 @@ Set_defaults ()
+ 					;;
+ 
+ 				*)
+-					LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY:-http://ports.ubuntu.com/}"
++					LB_PARENT_MIRROR_BINARY_SECURITY="${LB_PARENT_MIRROR_BINARY_SECURITY:-http://ports.ubuntu.com/ubuntu-ports/}"
+ 					;;
+ 			esac
+ 
+@@ -502,7 +502,7 @@ Set_defaults ()
+ 					;;
+ 
+ 				*)
+-					LB_PARENT_MIRROR_BINARY_VOLATILE="${LB_PARENT_MIRROR_BINARY_VOLATILE:-http://ports.ubuntu.com/}"
++					LB_PARENT_MIRROR_BINARY_VOLATILE="${LB_PARENT_MIRROR_BINARY_VOLATILE:-http://ports.ubuntu.com/ubuntu-ports/}"
+ 					;;
+ 			esac
+ 			;;

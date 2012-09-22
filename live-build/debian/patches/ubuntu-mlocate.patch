@@ -1,0 +1,25 @@
+Description: Update the mlocate database
+Author: Colin Watson <cjwatson@ubuntu.com>
+Bug-Debian: http://bugs.debian.org/627332
+Forwarded: http://bugs.debian.org/627332
+Last-Update: 2011-06-11
+
+Index: b/scripts/build/lb_chroot_hacks
+===================================================================
+--- a/scripts/build/lb_chroot_hacks
++++ b/scripts/build/lb_chroot_hacks
+@@ -214,6 +214,14 @@
+ # people might do in local hooks, and there might be no initrds at all.
+ find chroot/boot -name 'initrd*' -print0 | xargs -r -0 chmod go+r
+ 
++# Update the mlocate database.  It's convenient for this to be already up to
++# date on the live system, and it means that if the live system is later
++# installed to a hard disk then less work will be required after
++# installation.
++if [ -x chroot/usr/bin/updatedb.mlocate ]; then
++	Chroot chroot updatedb.mlocate
++fi
++
+ # Remove build systems clock drift
+ echo "0.0 0 0.0" > chroot/etc/adjtime
+ 

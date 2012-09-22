@@ -1,0 +1,17 @@
+Description: Removed left over use of --packages-lists in examples/auto/config.
+ Correct usage is --package-lists, as shown here:
+ http://live.debian.net/manual/html/live-manual.en.html#319
+Author: Rigved Rakshit <r.phate@gmail.com>
+Bug-Ubuntu: https://launchpad.net/bugs/923355
+
+Index: live-build-3.0~a24/examples/auto/config
+===================================================================
+--- live-build-3.0~a24.orig/examples/auto/config	2011-07-13 06:26:18.000000000 +0530
++++ live-build-3.0~a24/examples/auto/config	2012-02-24 16:10:39.699666992 +0530
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+ 
+ lb config noauto \
+-	--packages-lists "standard" \
++	--package-lists "standard" \
+ 	"${@}"

@@ -1,0 +1,395 @@
+Description: Add support for ext4 for binary and chroot filesystems
+Author: Ben Howard <ben.howard@canonical.com>
+Author: Daniel Baumann <daniel@debian.org>
+Author: intrigeri <intrigeri@boum.org>
+Origin: backport, http://live.debian.net/gitweb?p=live-build.git;a=commitdiff;h=5d2fbf5d5adfd82f59b039d914c09e5dbca8296b
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/803547
+Forwarded: not-needed
+Last-Update: 2011-09-19
+
+Index: b/functions/defaults.sh
+===================================================================
+--- a/functions/defaults.sh
++++ b/functions/defaults.sh
+@@ -772,7 +772,7 @@
+ 	# Setting image filesystem
+ 	case "${LB_ARCHITECTURES}" in
+ 		sparc)
+-			LB_BINARY_FILESYSTEM="${LB_BINARY_FILESYSTEM:-ext2}"
++			LB_BINARY_FILESYSTEM="${LB_BINARY_FILESYSTEM:-ext4}"
+ 			;;
+ 
+ 		*)
+Index: b/manpages/de/lb_config.de.1
+===================================================================
+--- a/manpages/de/lb_config.de.1
++++ b/manpages/de/lb_config.de.1
+@@ -36,7 +36,7 @@
+ .br
+   [\-b|\fB\-\-binary\-images\fP iso|iso\-hybrid|net|tar|usb\-hdd]
+ .br
+-  [\fB\-\-binary\-filesystem\fP fat16|fat32|ext2]
++  [\fB\-\-binary\-filesystem\fP fat16|fat32|ext2|ext3|ext4]
+ .br
+   [\fB\-\-bootappend\-install\fP \fIPARAMETER\fP|\fI"PARAMETERS"\fP]
+ .br
+@@ -64,7 +64,7 @@
+ .br
+   [\fB\-\-build\-with\-chroot\fP true|false]
+ .br
+-  [\fB\-\-chroot\-filesystem\fP ext2|ext3|squashfs|plain|jffs2]
++  [\fB\-\-chroot\-filesystem\fP ext2|ext3|ext4|squashfs|plain|jffs2]
+ .br
+   [\fB\-\-clean\fP]
+ .br
+@@ -320,13 +320,13 @@
+ defines the image type to build. By default, for images using syslinux this
+ is set to iso\-hybrid to build CD/DVD images that may also be used like
+ usb\-hdd images, for non\-syslinux images, it defaults to iso.
+-.IP "\fB\-\-binary\-filesystem\fP fat16|fat32|ext2" 4
++.IP "\fB\-\-binary\-filesystem\fP fat16|fat32|ext2|ext3|ext4" 4
+ defines the filesystem to be used in the image type. This only has an effect
+ if the selected binary image type does allow to choose a filesystem. For
+ example, when selection iso the resulting CD/DVD has always the filesystem
+ ISO9660. When building usb\-hdd images for usb sticks, this is active. Note
+ that it defaults to fat16 on all architectures except sparc where it
+-defaults to ext2. Also note that if you choose fat16 and your resulting
++defaults to ext4. Also note that if you choose fat16 and your resulting
+ binary image gets bigger than 2GB, the binary filesystem automatically gets
+ switched to fat32.
+ .IP "\fB\-\-bootappend\-install\fP \fIPARAMETER\fP|\(dq\fIPARAMETERS\fP\(dq" 4
+@@ -402,7 +402,7 @@
+ build\-time in the target distribution. Never do disable this option unless
+ you are \fBexactely\fP sure what you are doing and have \fBcompletely\fP\fI
+ understood its consequences.\fP
+-.IP "\fB\-\-chroot\-filesystem\fP ext2|ext3|squashfs|plain|jffs2" 4
++.IP "\fB\-\-chroot\-filesystem\fP ext2|ext3|ext4|squashfs|plain|jffs2" 4
+ defines which filesystem type should be used for the root filesystem
+ image. If you use plain, then no filesystem image is created and the root
+ filesystem content is copied on the binary image filesystem as flat
+Index: b/manpages/en/lb_config.1
+===================================================================
+--- a/manpages/en/lb_config.1
++++ b/manpages/en/lb_config.1
+@@ -31,7 +31,7 @@
+ .br
+ 	[\-b|\fB\-\-binary\-images\fR iso|iso\-hybrid|net|tar|usb\-hdd]
+ .br
+-	[\fB\-\-binary\-filesystem\fR fat16|fat32|ext2]
++	[\fB\-\-binary\-filesystem\fR fat16|fat32|ext2|ext3|ext4]
+ .br
+ 	[\fB\-\-bootappend\-install\fR \fIPARAMETER\fR|\fI"PARAMETERS"\fR]
+ .br
+@@ -59,7 +59,7 @@
+ .br
+ 	[\fB\-\-build\-with\-chroot\fR true|false]
+ .br
+-	[\fB\-\-chroot\-filesystem\fR ext2|ext3|squashfs|plain|jffs2]
++	[\fB\-\-chroot\-filesystem\fR ext2|ext3|ext4|squashfs|plain|jffs2]
+ .br
+ 	[\fB\-\-clean\fR]
+ .br
+@@ -275,8 +275,8 @@
+ defines the architecture of the to be build image. By default, this is set to the host architecture. Note that you cannot crossbuild for another architecture if your host system is not able to execute binaries for the target architecture natively. For example, building amd64 images on i386 and vice versa is possile if you have a 64bit capable i386 processor and the right kernel. But building powerpc images on an i386 system is not possible.
+ .IP "\-b|\fB\-\-binary\-images\fR iso|iso\-hybrid|net|tar|usb\-hdd" 4
+ defines the image type to build. By default, for images using syslinux this is set to iso\-hybrid to build CD/DVD images that may also be used like usb\-hdd images, for non\-syslinux images, it defaults to iso.
+-.IP "\fB\-\-binary\-filesystem\fR fat16|fat32|ext2" 4
+-defines the filesystem to be used in the image type. This only has an effect if the selected binary image type does allow to choose a filesystem. For example, when selection iso the resulting CD/DVD has always the filesystem ISO9660. When building usb\-hdd images for usb sticks, this is active. Note that it defaults to fat16 on all architectures except sparc where it defaults to ext2. Also note that if you choose fat16 and your resulting binary image gets bigger than 2GB, the binary filesystem automatically gets switched to fat32.
++.IP "\fB\-\-binary\-filesystem\fR fat16|fat32|ext2|ext3|ext4" 4
++defines the filesystem to be used in the image type. This only has an effect if the selected binary image type does allow to choose a filesystem. For example, when selection iso the resulting CD/DVD has always the filesystem ISO9660. When building usb\-hdd images for usb sticks, this is active. Note that it defaults to fat16 on all architectures except sparc where it defaults to ext4. Also note that if you choose fat16 and your resulting binary image gets bigger than 2GB, the binary filesystem automatically gets switched to fat32.
+ .IP "\fB\-\-bootappend\-install\fR \fIPARAMETER\fR|""\fIPARAMETERS\fR""" 4
+ sets boot parameters specific to debian\-installer, if included.
+ .IP "\fB\-\-bootappend\-live\fR \fIPARAMETER\fR|""\fIPARAMETERS\fR""" 4
+@@ -303,7 +303,7 @@
+ defines the compression program to be used to compress tarballs. Defaults to gzip.
+ .IP "\fB\-\-build\-with\-chroot\fR true|false" 4
+ defines whetever live\-build should use the tools from within the chroot to build the binary image or not by using and including the host systems tools. This is a very dangerous option, using the tools of the host system can lead to tainted and even non-bootable images if the host systems version of the required tools (mainly these are the bootloaders such as syslinux, grub and yaboot, and the auxilliary tools such as dosfstools, genisoimage, squashfs-tools and others) do not \fBexactely\fR match what is present at build-time in the target distribution. Never do disable this option unless you are \fBexactely\fR sure what you are doing and have \fBcompletely\fI understood its consequences.
+-.IP "\fB\-\-chroot\-filesystem\fR ext2|ext3|squashfs|plain|jffs2" 4
++.IP "\fB\-\-chroot\-filesystem\fR ext2|ext3|ext4|squashfs|plain|jffs2" 4
+ defines which filesystem type should be used for the root filesystem image. If you use plain, then no filesystem image is created and the root filesystem content is copied on the binary image filesystem as flat files. Depending on what binary filesystem you have choosen, it may not be possible to build with a plain root filesystem, e.g. fat16/fat32 and plain don't work as linux does not support to run on them.
+ .IP "\fB\-\-clean\fR" 4
+ minimizes config directory by automatically removing unused and thus empty subdirectories.
+Index: b/manpages/po/de/lb_config.1.po
+===================================================================
+--- a/manpages/po/de/lb_config.1.po
++++ b/manpages/po/de/lb_config.1.po
+@@ -716,7 +716,7 @@
+ 
+ #. type: Plain text
+ #: en/lb_config.1:35
+-msgid "  [B<--binary-filesystem> fat16|fat32|ext2]"
++msgid "  [B<--binary-filesystem> fat16|fat32|ext2|ext3|ext4]"
+ msgstr ""
+ 
+ #. type: Plain text
+@@ -786,7 +786,7 @@
+ 
+ #. type: Plain text
+ #: en/lb_config.1:63
+-msgid "  [B<--chroot-filesystem> ext2|ext3|squashfs|plain|jffs2]"
++msgid "  [B<--chroot-filesystem> ext2|ext3|ext4|squashfs|plain|jffs2]"
+ msgstr ""
+ 
+ #. type: Plain text
+@@ -1437,7 +1437,7 @@
+ #. type: IP
+ #: en/lb_config.1:278
+ #, no-wrap
+-msgid "B<--binary-filesystem> fat16|fat32|ext2"
++msgid "B<--binary-filesystem> fat16|fat32|ext2|ext3|ext4"
+ msgstr ""
+ 
+ #. type: Plain text
+@@ -1448,7 +1448,7 @@
+ "example, when selection iso the resulting CD/DVD has always the filesystem "
+ "ISO9660. When building usb-hdd images for usb sticks, this is active. Note "
+ "that it defaults to fat16 on all architectures except sparc where it "
+-"defaults to ext2. Also note that if you choose fat16 and your resulting "
++"defaults to ext4. Also note that if you choose fat16 and your resulting "
+ "binary image gets bigger than 2GB, the binary filesystem automatically gets "
+ "switched to fat32."
+ msgstr ""
+@@ -1656,7 +1656,7 @@
+ #. type: IP
+ #: en/lb_config.1:306
+ #, no-wrap
+-msgid "B<--chroot-filesystem> ext2|ext3|squashfs|plain|jffs2"
++msgid "B<--chroot-filesystem> ext2|ext3|ext4|squashfs|plain|jffs2"
+ msgstr ""
+ 
+ #. type: Plain text
+Index: b/manpages/pot/lb_config.1.pot
+===================================================================
+--- a/manpages/pot/lb_config.1.pot
++++ b/manpages/pot/lb_config.1.pot
+@@ -716,7 +716,7 @@
+ 
+ #. type: Plain text
+ #: en/lb_config.1:35
+-msgid "  [B<--binary-filesystem> fat16|fat32|ext2]"
++msgid "  [B<--binary-filesystem> fat16|fat32|ext2|ext3|ext4]"
+ msgstr ""
+ 
+ #. type: Plain text
+@@ -786,7 +786,7 @@
+ 
+ #. type: Plain text
+ #: en/lb_config.1:63
+-msgid "  [B<--chroot-filesystem> ext2|ext3|squashfs|plain|jffs2]"
++msgid "  [B<--chroot-filesystem> ext2|ext3|ext4|squashfs|plain|jffs2]"
+ msgstr ""
+ 
+ #. type: Plain text
+@@ -1437,7 +1437,7 @@
+ #. type: IP
+ #: en/lb_config.1:278
+ #, no-wrap
+-msgid "B<--binary-filesystem> fat16|fat32|ext2"
++msgid "B<--binary-filesystem> fat16|fat32|ext2|ext3|ext4"
+ msgstr ""
+ 
+ #. type: Plain text
+@@ -1448,7 +1448,7 @@
+ "example, when selection iso the resulting CD/DVD has always the filesystem "
+ "ISO9660. When building usb-hdd images for usb sticks, this is active. Note "
+ "that it defaults to fat16 on all architectures except sparc where it "
+-"defaults to ext2. Also note that if you choose fat16 and your resulting "
++"defaults to ext4. Also note that if you choose fat16 and your resulting "
+ "binary image gets bigger than 2GB, the binary filesystem automatically gets "
+ "switched to fat32."
+ msgstr ""
+@@ -1656,7 +1656,7 @@
+ #. type: IP
+ #: en/lb_config.1:306
+ #, no-wrap
+-msgid "B<--chroot-filesystem> ext2|ext3|squashfs|plain|jffs2"
++msgid "B<--chroot-filesystem> ext2|ext3|ext4|squashfs|plain|jffs2"
+ msgstr ""
+ 
+ #. type: Plain text
+Index: b/scripts/build/lb_binary_rootfs
+===================================================================
+--- a/scripts/build/lb_binary_rootfs
++++ b/scripts/build/lb_binary_rootfs
+@@ -88,9 +88,9 @@
+ done
+ 
+ case "${LB_CHROOT_FILESYSTEM}" in
+-	ext2|ext3)
++	ext2|ext3|ext4)
+ 		# Checking depends
+-		Check_package chroot/sbin/mkfs.ext2 e2fsprogs
++		Check_package chroot/sbin/mkfs.${LB_BINARY_FILESYSTEM} e2fsprogs
+ 
+ 		# Restoring cache
+ 		Restore_cache cache/packages_binary
+Index: b/scripts/build/lb_binary_usb
+===================================================================
+--- a/scripts/build/lb_binary_usb
++++ b/scripts/build/lb_binary_usb
+@@ -51,12 +51,12 @@
+ if [ "${LB_ARCHITECTURES}" = "sparc" ]
+ then
+ 	case "${LB_BINARY_FILESYSTEM}" in
+-		ext2|ext3)
+-			Check_package chroot/sbin/mkfs.ext2 e2fsprogs
++		ext2|ext3|ext4)
++			Check_package chroot/sbin/mkfs.${LB_BINARY_FILESYSTEM} e2fsprogs
+ 			;;
+ 
+ 		*)
+-			Echo_error "Sparc only supports booting from ext2, ext3 (or ufs)"
++			Echo_error "Sparc only supports booting from ext2, ext3, ext4 or ufs."
+ 			exit 1
+ 			;;
+ 	esac
+@@ -128,7 +128,7 @@
+ esac
+ 
+ case "${LB_BINARY_FILESYSTEM}" in
+-	ext2|ext3)
++	ext2|ext3|ext4)
+ 		PARTITION_TYPE="ext2"
+ 		;;
+ 
+@@ -171,7 +171,7 @@
+ Losetup $FREELO chroot/binary.img 1
+ 
+ case "${LB_BINARY_FILESYSTEM}" in
+-	ext2|ext3)
++	ext2|ext3|ext4)
+ 		MKFS="${LB_BINARY_FILESYSTEM}"
+ 		MKFS_OPTIONS="-L DEBIAN_LIVE -m 0"
+ 		;;
+Index: b/scripts/build/lb_binary_virtual-hdd
+===================================================================
+--- a/scripts/build/lb_binary_virtual-hdd
++++ b/scripts/build/lb_binary_virtual-hdd
+@@ -46,8 +46,8 @@
+ if [ "${LB_BUILD_WITH_CHROOT}" = "true" ]
+ then
+ 	case "${LB_BINARY_FILESYSTEM}" in
+-		ext2|ext3)
+-			Check_package chroot/sbin/mkfs.ext2 e2fsprogs
++		ext2|ext3|ext4)
++			Check_package chroot/sbin/mkfs.${LB_BINARY_FILESYSTEM}  e2fsprogs
+ 			;;
+ 	esac
+ fi
+@@ -79,24 +79,16 @@
+ 	fi
+ 
+ 	case "${LB_BINARY_FILESYSTEM}" in
+-		ext2)
+-			Chroot chroot "mkfs.ext2 -F binary-virtual.img"
+-			;;
+-
+-		ext3)
+-			Chroot chroot "mkfs.ext3 -F binary-virtual.img"
++		ext2|ext3|ext4)
++			Chroot chroot "mkfs.${LB_BINARY_FILESYSTEM} -F binary-virtual.img"
+ 			;;
+ 	esac
+ 
+ 	mv chroot/binary-virtual.img ./
+ else
+ 	case "${LB_BINARY_FILESYSTEM}" in
+-		ext2)
+-			mkfs.ext2 -F binary-virtual.img
+-			;;
+-
+-		ext3)
+-			mkfs.ext3 -F binary-virtual.img
++		ext2|ext3|ext4)
++			mkfs.${LB_BINARY_FILESYSTEM} . -F binary-virtual.img
+ 			;;
+ 	esac
+ fi
+Index: b/scripts/build/lb_config
+===================================================================
+--- a/scripts/build/lb_config
++++ b/scripts/build/lb_config
+@@ -40,7 +40,7 @@
+ \t    [--apt-secure true|false]\n\
+ \t    [-a|--architectures ARCHITECTURE]\n\
+ \t    [-b|--binary-images iso|iso-hybrid|net|tar|usb-hdd]\n\
+-\t    [--binary-filesystem fat16|fat32|ext2]\n\
++\t    [--binary-filesystem fat16|fat32|ext2|ext3|ext4]\n\
+ \t    [--bootappend-install PARAMETER|\"PARAMETERS\"]\n\
+ \t    [--bootappend-live PARAMETER|\"PARAMETERS\"]\n\
+ \t    [--bootloader grub|syslinux|yaboot]\n\
+@@ -54,7 +54,7 @@
+ \t    [--checksums md5|sha1|sha256|none]\n\
+ \t    [--compression bzip2|gzip|lzip|none]\n\
+ \t    [--build-with-chroot true|false]\n\
+-\t    [--chroot-filesystem ext2|ext3|squashfs|plain|jffs2]\n\
++\t    [--chroot-filesystem ext2|ext3|ext4|squashfs|plain|jffs2]\n\
+ \t    [--clean\n\
+ \t    [-c|--conffile FILE]\n\
+ \t    [--debconf-frontend dialog|editor|noninteractive|readline]\n\
+Index: b/scripts/build/lb_source_usb
+===================================================================
+--- a/scripts/build/lb_source_usb
++++ b/scripts/build/lb_source_usb
+@@ -75,7 +75,7 @@
+ fi
+ 
+ case "${LB_BINARY_FILESYSTEM}" in
+-	ext2|ext3)
++	ext2|ext3|ext4)
+ 		PARTITION_TYPE="ext2"
+ 		;;
+ 
+@@ -100,7 +100,7 @@
+ Losetup $FREELO source.img 1
+ 
+ case "${LB_BINARY_FILESYSTEM}" in
+-	ext2|ext3)
++	ext2|ext3|ext4)
+ 		MKFS="${LB_BINARY_FILESYSTEM}"
+ 		MKFS_OPTIONS="-L DEBIAN_LIVE -m 0"
+ 		;;
+Index: b/scripts/build/lb_source_virtual-hdd
+===================================================================
+--- a/scripts/build/lb_source_virtual-hdd
++++ b/scripts/build/lb_source_virtual-hdd
+@@ -51,8 +51,8 @@
+ if [ "${LB_BUILD_WITH_CHROOT}" = "true" ]
+ then
+ 	case "${LB_BINARY_FILESYSTEM}" in
+-		ext2|ext3)
+-			Check_package chroot/sbin/mkfs.ext2 e2fsprogs
++		ext2|ext3|ext4)
++			Check_package chroot/sbin/mkfs.${LB_BINARY_FILESYSTEM} e2fsprogs
+ 			;;
+ 	esac
+ fi
+@@ -76,24 +76,15 @@
+ 	mv source-virtual.img chroot
+ 
+ 	case "${LB_BINARY_FILESYSTEM}" in
+-		ext2)
+-			Chroot chroot "mkfs.ext2 -F -m 0 source-virtual.img"
+-			;;
+-
+-		ext3)
+-			Chroot chroot "mkfs.ext3 -F source-virtual.img"
+-			;;
++		ext2|ext3|ext4)
++			Chroot chroot "mkfs.${LB_BINARY_FILESYSTEM} -F -m 0 source-virtual.img"
+ 	esac
+ 
+ 	mv chroot/source-virtual.img ./
+ else
+ 	case "${LB_BINARY_FILESYSTEM}" in
+-		ext2)
+-			mkfs.ext2 -F -m 0 source-virtual.img
+-			;;
+-
+-		ext3)
+-			mkfs.ext3 -F -m 0 source-virtual.img
++		ext2|ext3|ext4)
++			mkfs.${LB_BINARY_FILESYSTEM} -F -m 0 source-virtual.img
+ 			;;
+ 	esac
+ fi

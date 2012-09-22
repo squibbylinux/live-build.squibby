@@ -1,0 +1,29 @@
+Description: Fixup live.cfg for casper
+Author: Reinhard Tartler <siretart@tauware.de>
+Last-Update: 2011-07-10
+
+live.cfg from the themes package include a 'boot=live' parameter, which works only
+for live-config. casper OTOH requires 'boot=casper'
+
+
+Index: b/scripts/build/lb_binary_syslinux
+===================================================================
+--- a/scripts/build/lb_binary_syslinux
++++ b/scripts/build/lb_binary_syslinux
+@@ -100,8 +100,16 @@
+ then
+ 	sed -i -e "s|@LB_BOOTAPPEND_LIVE@|${LB_BOOTAPPEND_LIVE}|g" \
+ 	${_SUFFIX}/live.cfg
++
++	case "${LB_INITRAMFS}" in
++		casper)
++			sed -i -e "s|boot=live|boot=casper|" \
++			    ${_SUFFIX}/live.cfg
++			;;
++	esac
+ fi
+ 
++
+ if [ -e ${_SUFFIX}/install.cfg ]
+ then
+ 	sed -i -e "s|@LB_BOOTAPPEND_INSTALL@|${LB_BOOTAPPEND_INSTALL}|g" \

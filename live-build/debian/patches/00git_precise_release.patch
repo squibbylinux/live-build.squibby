@@ -1,0 +1,18 @@
+From 171207435f8a2b573a9f373747733b0fdfdbcca6 Mon Sep 17 00:00:00 2001
+From: Daniel Baumann <daniel@debian.org>
+Date: Fri, 28 Oct 2011 14:31:36 +0200
+Subject: [PATCH] Adding precise in releases list.
+
+---
+ functions/releases.sh |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+Index: live-build-3.0~a24/functions/releases.sh
+===================================================================
+--- live-build-3.0~a24.orig/functions/releases.sh	2011-07-13 02:56:18.000000000 +0200
++++ live-build-3.0~a24/functions/releases.sh	2012-03-12 11:18:18.503505128 +0100
+@@ -24,3 +24,4 @@
+ RELEASE_maverick="10.10"	# 2012-04-01
+ RELEASE_natty="11.04"		# 2012-10-01
+ RELEASE_oneiric="11.10"
++RELEASE_precise="12.04"		# LTS: 2017-04-01

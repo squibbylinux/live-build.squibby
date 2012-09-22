@@ -1,0 +1,19 @@
+Description: Add Kubuntu hook to remove GNOME icon cache
+Author: Colin Watson <cjwatson@ubuntu.com>
+Bug-Debian: http://bugs.debian.org/630088
+Forwarded: http://bugs.debian.org/630088
+Last-Update: 2011-06-11
+
+Index: b/examples/hooks/kubuntu_chroot_icon-theme.sh
+===================================================================
+--- /dev/null
++++ b/examples/hooks/kubuntu_chroot_icon-theme.sh
+@@ -0,0 +1,8 @@
++#! /bin/sh
++
++# This is a hook for live-build(7) to remove the GNOME icon cache for
++# Kubuntu builds.
++# To enable it, copy or symlink this hook into your config/chroot_local-hooks
++# directory.
++
++rm -f /usr/share/icons/*/icon-theme.cache

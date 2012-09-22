@@ -1,0 +1,20 @@
+Description: Default to ubuntu-oneiric syslinux theme on Ubuntu
+Author: Colin Watson <cjwatson@ubuntu.com>
+Forwarded: no
+Last-Update: 2011-08-11
+
+Index: b/functions/defaults.sh
+===================================================================
+--- a/functions/defaults.sh
++++ b/functions/defaults.sh
+@@ -1035,6 +1035,10 @@
+ 			LB_SYSLINUX_THEME="${LB_SYSLINUX_THEME:-progress-standard}"
+ 			;;
+ 
++		ubuntu)
++			LB_SYSLINUX_THEME="${LB_SYSLINUX_THEME:-ubuntu-oneiric}"
++			;;
++
+ 		*)
+ 			LB_SYSLINUX_THEME="${LB_SYSLINUX_THEME:-debian-squeeze}"
+ 			;;

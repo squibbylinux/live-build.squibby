@@ -1,0 +1,17 @@
+Description: Clean up chroot/tmp chroot/run chroot/var/tmp chroot/var/run
+Author: Adam Conrad <adconrad@ubuntu.com>
+
+--- live-build-3.0~a24.orig/scripts/build/lb_chroot_hacks
++++ live-build-3.0~a24/scripts/build/lb_chroot_hacks
+@@ -248,6 +248,11 @@ rm -f chroot/var/cache/debconf/*-old
+ rm -f chroot/var/lib/dpkg/*-old
+ rm -f chroot/var/lib/dbus/machine-id
+ rm -f chroot/var/log/apt/term.log
++# Some of these are sometimes symlinks, but it never hurts to be thorough
++rm -rf chroot/run/*
++rm -rf chroot/tmp/*
++rm -rf chroot/var/run/*
++rm -rf chroot/var/tmp/*
+ 
+ if [ -n "${LB_ROOT_COMMAND}" ]
+ then

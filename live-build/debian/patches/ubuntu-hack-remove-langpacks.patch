@@ -1,0 +1,25 @@
+Description: Hack to remove the langpacks from 12.04.1 images
+Author: Stéphane Graber <stgraber@ubuntu.com>
+Origin: vendor
+Last-Update: 2012-08-09
+
+Index: live-build-3.0~a24/scripts/build/lb_chroot_hacks
+===================================================================
+--- live-build-3.0~a24.orig/scripts/build/lb_chroot_hacks	2012-08-23 12:01:21.000000000 -0400
++++ live-build-3.0~a24/scripts/build/lb_chroot_hacks	2012-08-23 12:06:35.427788789 -0400
+@@ -239,6 +239,15 @@
+ # Remove build systems clock drift
+ echo "0.0 0 0.0" > chroot/etc/adjtime
+ 
++# Hack to remove the german langpacks from the i386 ubuntu desktop live image
++# this is 12.04.1-specific and shouldn't be carried forward.
++if [ "${LB_ARCHITECTURES}" = "i386" ] && [ "${PROJECT}" = "ubuntu" ]; then
++	Chroot chroot "apt-get remove --purge -y language-pack-de-base firefox-locale-de" || Echo_warning "Unable to find German langpack on image so can't remove it"
++fi
++if [ "${LB_ARCHITECTURES}" = "amd64" ] && [ "${PROJECT}" = "ubuntu" ]; then
++	Chroot chroot "apt-get remove --purge -y language-pack-pt-base firefox-locale-pt" || Echo_warning "Unable to find Portugese langpack on image so can't remove it"
++fi
++
+ # Remove cruft
+ rm -f chroot/boot/initrd*bak*
+ rm -f chroot/etc/apt/trusted.gpg~

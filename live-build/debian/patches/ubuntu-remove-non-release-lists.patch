@@ -1,0 +1,29 @@
+Description: Always remove apt lists for pockets other than the release one
+ The installer doesn't need non-release pocket lists and these are taking
+ up quite a bit of space on the media.
+ .
+ These other pockets changing quite frequently, they will usually have to
+ be re-downloaded by the time the system is installed anyway.
+Author: Stéphane Graber <stgraber@ubuntu.com>
+Origin: vendor
+Last-Update: 2012-08-07
+
+Index: live-build-3.0~a24/scripts/build/lb_chroot_archives
+===================================================================
+--- live-build-3.0~a24.orig/scripts/build/lb_chroot_archives	2011-07-12 20:56:19.000000000 -0400
++++ live-build-3.0~a24/scripts/build/lb_chroot_archives	2012-08-07 17:16:09.764668101 -0400
+@@ -804,6 +804,14 @@
+ 			mkdir -p chroot/var/lib/apt/lists/partial
+ 		fi
+ 
++		# Remove non-release pocket lists on Ubuntu
++		if [ "${LB_MODE}" = "ubuntu" ]
++		then
++			rm -f chroot/var/lib/apt/lists/*-updates_*
++			rm -f chroot/var/lib/apt/lists/*-security_*
++			rm -f chroot/var/lib/apt/lists/*-proposed_*
++		fi
++
+ 		# Remove local package repository
+ 		rm -f chroot/etc/apt/sources.list.d/packages.list
+ 		rm -rf chroot/root/packages

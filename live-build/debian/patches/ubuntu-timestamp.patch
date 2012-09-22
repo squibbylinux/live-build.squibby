@@ -1,0 +1,34 @@
+Description: Print the current time before starting a command with lb
+Author: Colin Watson <cjwatson@ubuntu.com>
+Bug-Debian: http://bugs.debian.org/630089
+Forwarded: http://bugs.debian.org/630089
+Applied-Upstream: yes
+Last-Update: 2012-01-12
+
+Index: b/scripts/build/lb
+===================================================================
+--- a/scripts/build/lb
++++ b/scripts/build/lb
+@@ -44,16 +44,19 @@
+ 
+ 		if [ -x "${LB_BASE}/scripts/build/${COMMAND}" ]
+ 		then
+-			LB=1 exec "${LB_BASE}/scripts/build/${COMMAND}" "${@}"
++			SCRIPT="${LB_BASE}/scripts/build/${COMMAND}"
+ 		elif [ -x /usr/share/live/build/scripts/build/${COMMAND} ]
+ 		then
+-			LB=1 exec /usr/share/live/build/scripts/build/"${COMMAND}" "${@}"
++			SCRIPT=/usr/share/live/build/scripts/build/"${COMMAND}"
+ 		elif [ -x "$(which ${COMMAND} 2>/dev/null)" ]
+ 		then
+-			LB=1 exec "${COMMAND}" "${@}"
++			SCRIPT="${COMMAND}"
+ 		else
+ 			Echo_error "no such script"
+ 			exit 1
+ 		fi
++
++		Echo "[%s] %s" "$(date +'%F %T')" "${COMMAND} ${*}"
++		LB=1 exec "${SCRIPT}" "${@}"
+ 		;;
+ esac

@@ -1,0 +1,34 @@
+Source: live-build
+Section: misc
+Priority: optional
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Debian Live Project <debian-live@lists.debian.org>
+Uploaders: Daniel Baumann <daniel@debian.org>
+Build-Depends: debhelper (>= 8)
+Build-Depends-Indep: gettext
+Standards-Version: 3.9.2
+Homepage: http://live.debian.net/devel/live-build/
+Vcs-Browser: http://live.debian.net/gitweb/?p=live-build.git
+Vcs-Git: git://live.debian.net/git/live-build.git
+
+Package: live-build
+Architecture: all
+Depends: ${misc:Depends}, debootstrap | cdebootstrap | cdebootstrap-static
+Recommends: cpio, gettext-base
+Suggests:
+ dosfstools, genisoimage, memtest86+ | memtest86, mtools, parted,
+ squashfs-tools | mtd-tools, sudo | fakeroot, syslinux | grub,
+ uuid-runtime, win32-loader, gnu-fdisk
+Description: Debian Live - System Build Scripts
+ live-build contains the scripts that build a Debian Live system image from a
+ configuration directory.
+
+Package: live-build-cgi
+Architecture: all
+Depends: ${misc:Depends}
+Recommends: apache2 | httpd
+Description: Debian Live - System Build Scripts (cgi frontend)
+ live-build contains the scripts that build a Debian Live system image from a
+ configuration directory.
+ .
+ This package contains the cgi frontend.
