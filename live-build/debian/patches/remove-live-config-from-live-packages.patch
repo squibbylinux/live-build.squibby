@@ -1,0 +1,17 @@
+Index: live-build/scripts/build/lb_chroot_live-packages
+===================================================================
+--- live-build.orig/scripts/build/lb_chroot_live-packages	2012-05-30 08:38:03.005213776 +0300
++++ live-build/scripts/build/lb_chroot_live-packages	2012-05-30 08:38:57.485483938 +0300
+@@ -44,12 +44,6 @@
+ 	_PACKAGES="${LB_INITRAMFS}"
+ fi
+ 
+-# Queue installation of live-config
+-if [ "${LB_INITSYSTEM}" != "none" ]
+-then
+-	_PACKAGES="${_PACKAGES} live-config live-config-${LB_INITSYSTEM}"
+-fi
+-
+ # Do initsystem specific hacks
+ if [ "${LB_INITSYSTEM}" != "sysvinit" ]
+ then

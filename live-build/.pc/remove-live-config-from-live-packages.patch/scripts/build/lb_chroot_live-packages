@@ -44,6 +44,12 @@ then
 	_PACKAGES="${LB_INITRAMFS}"
 fi
 
+# Queue installation of live-config
+if [ "${LB_INITSYSTEM}" != "none" ]
+then
+	_PACKAGES="${_PACKAGES} live-config live-config-${LB_INITSYSTEM}"
+fi
+
 # Do initsystem specific hacks
 if [ "${LB_INITSYSTEM}" != "sysvinit" ]
 then
