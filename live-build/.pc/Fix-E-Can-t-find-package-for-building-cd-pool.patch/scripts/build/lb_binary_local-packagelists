@@ -58,9 +58,6 @@ then
 		# Generate package list
 		Expand_packagelist "${PACKAGELIST}" "config/package-lists" > chroot/root/"$(basename ${PACKAGELIST})"
 
-		# Update packagelist
-		Chroot chroot "apt-get ${APT_OPTIONS} update"
-
 		# Downloading additional packages
 		Chroot chroot "xargs --arg-file=/root/$(basename ${PACKAGELIST}) apt-get ${APT_OPTIONS} -o Dir::Cache=/binary.deb --download-only install"
 

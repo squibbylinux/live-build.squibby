@@ -1,0 +1,14 @@
+Index: live-build/scripts/build/lb_binary_local-packagelists
+===================================================================
+--- live-build.orig/scripts/build/lb_binary_local-packagelists	2012-05-30 08:13:11.485817741 +0300
++++ live-build/scripts/build/lb_binary_local-packagelists	2012-05-30 08:15:52.534616333 +0300
+@@ -58,6 +58,9 @@
+ 		# Generate package list
+ 		Expand_packagelist "${PACKAGELIST}" "config/package-lists" > chroot/root/"$(basename ${PACKAGELIST})"
+ 
++		# Update packagelist
++		Chroot chroot "apt-get ${APT_OPTIONS} update"
++
+ 		# Downloading additional packages
+ 		Chroot chroot "xargs --arg-file=/root/$(basename ${PACKAGELIST}) apt-get ${APT_OPTIONS} -o Dir::Cache=/binary.deb --download-only install"
+ 

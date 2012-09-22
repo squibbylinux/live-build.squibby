@@ -25,3 +25,4 @@ ubuntu-chroot_headers_tidy.patch
 ubuntu-remove-non-release-lists.patch
 ubuntu-hack-remove-langpacks.patch
 fix-missing-console-common.patch
+Fix-E-Can-t-find-package-for-building-cd-pool.patch
