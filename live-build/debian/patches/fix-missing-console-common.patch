@@ -1,0 +1,17 @@
+Index: live-build-3.0~a24/package-lists/standard
+===================================================================
+--- live-build-3.0~a24.orig/package-lists/standard	2011-07-13 03:56:19.000000000 +0300
++++ live-build-3.0~a24/package-lists/standard	2012-05-22 18:17:49.821337417 +0300
+@@ -2,7 +2,11 @@
+ 
+ #include <minimal>
+ 
+-console-setup console-common kbd
++console-setup
++#nif MODE ubuntu
++console-common
++#endif
++kbd
+ 
+ #nif MODE progress
+ locales
