@@ -1,3 +1,18 @@
+live-build (3.0~a24-1ubuntu33~squibby0.1) precise; urgency=low
+
+  * Add upstream commit 40a8a8ee7523240f4657b768909a9ed92fcfebc5 to fix the
+    "missing console-common" issue (LP: #975861)
+  * Fix "E: Can't find package" during build of CD pool, by inserting
+    an apt-get update before the apt-get install.
+  * When livecd was building its cdpool, it was starting from a zeroed
+    dpkg status file. This resulted into pulling *all* dependencies,
+    (around 1G size) which clearly doesn't work for an ubuntu derivative.
+    Fixing this got cdpool size down to ~32M which is acceptable.
+  * live-build wants to add live-config which doesn't work for us (we are
+    an ubuntu derivative and don't use live-config)
+
+ -- Pantelis Koukousoulas <pktoss@gmail.com>  Sat, 22 Sep 2012 19:19:37 +0000
+
 live-build (3.0~a24-1ubuntu32.5) precise-proposed; urgency=low
 
   * Remove Portugese langpack on amd64 ubuntu desktop image.
