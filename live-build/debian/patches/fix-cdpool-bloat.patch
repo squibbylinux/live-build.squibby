@@ -1,0 +1,21 @@
+Index: live-build/scripts/build/lb_binary_local-packagelists
+===================================================================
+--- live-build.orig/scripts/build/lb_binary_local-packagelists	2012-05-30 08:15:52.534616333 +0300
++++ live-build/scripts/build/lb_binary_local-packagelists	2012-05-30 08:23:49.360980790 +0300
+@@ -50,8 +50,6 @@
+ 	Install_package
+ 
+ 	mkdir -p chroot/binary.deb/archives/partial
+-	mv chroot/var/lib/dpkg/status chroot/var/lib/dpkg/status.tmp
+-	touch chroot/var/lib/dpkg/status
+ 
+ 	for PACKAGELIST in config/package-lists/*.binary.list
+ 	do
+@@ -119,7 +117,6 @@
+ 	cd "${OLDPWD}"
+ 
+ 	rm -rf chroot/binary.deb
+-	mv chroot/var/lib/dpkg/status.tmp chroot/var/lib/dpkg/status
+ 
+ 	# Removing depends
+ 	Remove_package

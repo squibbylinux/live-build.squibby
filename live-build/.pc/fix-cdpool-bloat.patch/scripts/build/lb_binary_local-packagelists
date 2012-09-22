@@ -50,6 +50,8 @@ then
 	Install_package
 
 	mkdir -p chroot/binary.deb/archives/partial
+	mv chroot/var/lib/dpkg/status chroot/var/lib/dpkg/status.tmp
+	touch chroot/var/lib/dpkg/status
 
 	for PACKAGELIST in config/package-lists/*.binary.list
 	do
@@ -117,6 +119,7 @@ then
 	cd "${OLDPWD}"
 
 	rm -rf chroot/binary.deb
+	mv chroot/var/lib/dpkg/status.tmp chroot/var/lib/dpkg/status
 
 	# Removing depends
 	Remove_package
